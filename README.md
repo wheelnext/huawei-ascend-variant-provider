@@ -104,7 +104,7 @@ uv pip install --no-index --find-links ./ helloworld --system -vv
 If you are running this command on Ascend A2 platform, you will see the key log like the following
 ```
 TRACE Found namespace ascend with configs VariantProviderOutput { namespace: VariantNamespace("ascend"), features: {VariantFeature("npu_type"): [VariantValue("910b")]} }
-TRACE Received variant metadata for: helloworld-0.1 @ file:///home/scripts/wheels/output_dir
+TRACE Received variant metadata for: helloworld-0.1 @ file:///workspace/wheels
 DEBUG Using variant wheel helloworld-0.1-py3-none-any-38edb458.whl
 DEBUG Selecting: helloworld==0.1 [compatible] (helloworld-0.1-py3-none-any-38edb458.whl)
 ```
@@ -132,7 +132,7 @@ uv pip install --no-index --find-links ./ helloworld --system -vv
 Then, you will see `310p` wheel is installed
 ```
 TRACE Found namespace ascend with configs VariantProviderOutput { namespace: VariantNamespace("ascend"), features: {VariantFeature("npu_type"): [VariantValue("310p")]} }
-TRACE Received variant metadata for: helloworld-0.1 @ file:///home/scripts/wheels/output_dir
+TRACE Received variant metadata for: helloworld-0.1 @ file:///workspace/wheels
 DEBUG Using variant wheel helloworld-0.1-py3-none-any-aabc2c9e.whl
 DEBUG Selecting: helloworld==0.1 [compatible] (helloworld-0.1-py3-none-any-aabc2c9e.whl)
 ```
