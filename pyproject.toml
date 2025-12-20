@@ -10,11 +10,10 @@ build-backend = "flit_core.buildapi"
 [project]
 # The official name of the package to be built
 name = "ascend-variant-provider"
-authors = [{ name = "WheelNext Community" }]
-maintainers = [
+authors = [
     { name = "Zhihang Deng", email = "zhihangdeng@link.cuhk.edu.com" }
 ]
-license = { text = "MIT" }  # Modern way to specify a standard license
+license = { file = "LICENSE" }  # Modern way to specify a standard license
 readme = "README.md"
 requires-python = ">=3.9"
 urls = { Home = "https://github.com/wheelnext/ascend-variant-provider/" }
