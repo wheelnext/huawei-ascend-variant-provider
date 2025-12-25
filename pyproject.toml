@@ -9,14 +9,14 @@ build-backend = "flit_core.buildapi"
 # Contains all the project metadata, dependencies, and the entry point.
 [project]
 # The official name of the package to be built
-name = "ascend-variant-provider"
+name = "huawei-ascend-variant-provider"
 authors = [
     { name = "Zhihang Deng", email = "zhihangdeng@link.cuhk.edu.com" }
 ]
 license = { file = "LICENSE" }  # Modern way to specify a standard license
 readme = "README.md"
 requires-python = ">=3.9"
-urls = { Home = "https://github.com/wheelnext/ascend-variant-provider/" }
+urls = { Home = "https://github.com/wheelnext/huawei-ascend-variant-provider/" }
 # No runtime dependencies, meaning self-contained
 dependencies = []
 # The version and description can be hard-coded and stored here (not the current case),
@@ -24,11 +24,11 @@ dependencies = []
 dynamic = ["version", "description"]
 
 # This section is how the provider registers itself with the Python packaging ecosystem,
-# which makes it explicitly clear that this is a plugin (named "ascend_variant_provider") for the `wheel` tool to be activated.
+# which makes it explicitly clear that this is a plugin (named "huawei_ascend_variant_provider") for the `wheel` tool to be activated.
 # Meanwhile, wheels must be installable without entry points.
 [project.entry-points.variant_plugins]
-ascend_variant_provider = "ascend_variant_provider.plugin:AscendVariantPlugin"
+huawei_ascend_variant_provider = "huawei_ascend_variant_provider.plugin:AscendVariantPlugin"
 
-# Optional: expose a tiny CLI (ascend_variant_print) for debugging.
+# Optional: expose a tiny CLI (huawei_ascend_variant_print) for debugging.
 [project.scripts]
-ascend_variant_print = "ascend_variant_provider.plugin:main"
+huawei_ascend_variant_print = "huawei_ascend_variant_provider.plugin:main"

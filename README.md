@@ -1,4 +1,4 @@
-# Ascend-variant-provider
+# Huawei-ascend-variant-provider
 A variant provider plugin for the Wheel Variant upcoming proposed standard that enables automatic detection and selection of Ascend NPU-optimized Python packages.
 
 
@@ -36,9 +36,9 @@ Add variant configuration to your `pyproject.toml`:
 namespace = ["ascend"]
 
 [variant.providers.ascend]
-requires = ["ascend-variant-provider>=0.0.1,<1.0.0"]
+requires = ["huawei-ascend-variant-provider>=0.0.1,<1.0.0"]
 enable-if = "platform_system == 'Linux'"
-plugin-api = "ascend_variant_provider.plugin:AscendVariantPlugin"
+plugin-api = "huawei_ascend_variant_provider.plugin:AscendVariantPlugin"
 ```
 
 Build the wheel for `python-helloworld`
@@ -95,7 +95,7 @@ variantlib make-variant \
 ```
 
 ### 3. Installation Test
-Copy [ascend_variant_provider-0.0.2-py3-none-any.whl](./docs/ascend-variant-provider/ascend_variant_provider-0.0.2-py3-none-any.whl) into `/workspace/wheels/`
+Copy [huawei_ascend_variant_provider-0.0.2-py3-none-any.whl](./docs/huawei-ascend-variant-provider/huawei_ascend_variant_provider-0.0.2-py3-none-any.whl) into `/workspace/wheels/`
 
 Use the following command to test installation
 ```
