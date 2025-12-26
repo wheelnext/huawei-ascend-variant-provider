@@ -18,8 +18,8 @@ import functools
 from dataclasses import dataclass
 from functools import lru_cache
 
-from ascend_variant_provider.pysmi import CannVersion, DriverVersion
-from ascend_variant_provider.pysmi import get_npu_types, get_driver_version, get_cann_version
+from huawei_ascend_variant_provider.pysmi import CannVersion, DriverVersion
+from huawei_ascend_variant_provider.pysmi import get_npu_types, get_driver_version, get_cann_version
 
 @dataclass(frozen=True)
 class AscendEnvironment:

@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Protocol, runtime_checkable
 
-from ascend_variant_provider.detect_cann import AscendEnvironment
+from huawei_ascend_variant_provider.detect_cann import AscendEnvironment
 
 
 @runtime_checkable
