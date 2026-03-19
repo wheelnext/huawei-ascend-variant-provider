@@ -14,12 +14,15 @@
 
 from __future__ import annotations
 
-import functools
+import logging
 from dataclasses import dataclass
 from functools import lru_cache
+from typing import List, Optional
 
 from huawei_ascend_variant_provider.pysmi import CannVersion, DriverVersion
 from huawei_ascend_variant_provider.pysmi import get_npu_types, get_driver_version, get_cann_version
+
+logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class AscendEnvironment:
@@ -30,19 +33,33 @@ class AscendEnvironment:
     @classmethod
     @lru_cache(maxsize=1)
     def from_system(cls) -> AscendEnvironment | None:
+        npu_types: List[tuple[int, str]] = []
+        driver_version: Optional[DriverVersion] = None
+        cann_version: Optional[CannVersion] = None
+
         try:
             npu_types = get_npu_types()
-            driver_version = get_driver_version()
-            cann_version = get_cann_version()
-
-            return cls(
-                driver_version=driver_version,
-                cann_version=cann_version,
-                npu_types=npu_types
-            )
         except Exception as e:
-            print(f"AscendEnvironment.from_system: failed to detect Ascend environment: {e}")
+            logger.warning("failed to detect NPU types: %s", e)
+
+        try:
+            driver_version = get_driver_version()
+        except Exception as e:
+            logger.warning("failed to detect driver version: %s", e)
+
+        try:
+            cann_version = get_cann_version()
+        except Exception as e:
+            logger.warning("failed to detect CANN version: %s", e)
+
+        if not npu_types and driver_version is None and cann_version is None:
             return None
+
+        return cls(
+            driver_version=driver_version,
+            cann_version=cann_version,
+            npu_types=npu_types
+        )
 
 if __name__ == "__main__":
     print(f"{AscendEnvironment.from_system()=}")

@@ -12,18 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import os
 import re
 import logging
 import shutil
 import subprocess
-from pathlib import Path
-from typing import Optional, Tuple, List, Dict, Any
-from dataclasses import dataclass
 from functools import lru_cache
+from typing import List, Optional
+from dataclasses import dataclass
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +37,7 @@ _DRIVER_VERSION_REGEX = re.compile(r"Version:"
                                    r"(?:\.(?P<patch>\d+))?"
                                    r"(?:\.rc(?P<rc>\d+))?", re.MULTILINE)
 
-_NPU_TYPE_REGEX = re.compile(r"^\|\s*(?P<index>\d+)\s+(?P<npu>\d+[A-Za-z]+)\d*\s+\|", re.MULTILINE)
+_NPU_TYPE_REGEX = re.compile(r"^\|\s*(?P<index>\d+)\s+(?P<npu>(?:\d+[A-Za-z]+\d*|[A-Za-z]+\d+[A-Za-z0-9]*))\s+\|", re.MULTILINE)
 
 # Currently only have major/minor/patch versions, but might want to add more version identifiers in the future
 @dataclass(frozen=True)
@@ -63,30 +60,54 @@ class AscendSmiError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
-def get_npu_types() -> List[tuple[int, str]]:
+
+@lru_cache(maxsize=1)
+def _get_npu_smi_info_output() -> str:
     npu_smi_path = shutil.which("npu-smi")
     if npu_smi_path is None:
         raise AscendSmiError("npu-smi command not found in PATH")
+
     try:
         result = subprocess.run(
             ["npu-smi", "info"],
             capture_output=True,
             text=True,
             check=True,
-            timeout=10
+            timeout=10,
         )
-
+        return result.stdout
     except subprocess.TimeoutExpired as exc:
         raise AscendSmiError("npu-smi info timed out") from exc
     except subprocess.CalledProcessError as exc:
         stderr = (exc.stderr or "").strip()
         raise AscendSmiError(f"npu-smi info failed: {stderr or exc}") from exc
 
+
+def _normalize_npu_type(raw_npu_type: str) -> str:
+    npu_type = raw_npu_type.removeprefix("ascend") or raw_npu_type
+
+    # Product requirement:
+    # - Ascend910 / 910 => a3
+    # - 910B* (e.g. 910B, 910B3) => a2
+    # - 310P* (e.g. 310P, 310P3) => 310p
+    if npu_type == "910":
+        return "a3"
+    if npu_type.startswith("910b"):
+        return "a2"
+    if npu_type.startswith("310p"):
+        return "310p"
+
+    return npu_type
+
+def get_npu_types() -> List[tuple[int, str]]:
+    output = _get_npu_smi_info_output()
+
     npu_types: List[tuple[int, str]] = []
-    for match in _NPU_TYPE_REGEX.finditer(result.stdout):
+    for match in _NPU_TYPE_REGEX.finditer(output):
         if match:
             npu_index = int(match.group("index"))
-            npu_type = match.group("npu").strip().lower()
+            raw_npu_type = match.group("npu").strip().lower()
+            npu_type = _normalize_npu_type(raw_npu_type)
             npu_types.append((npu_index, npu_type))
             logger.info(f"Detected NPU type: index={npu_index}, type={npu_type}")
 
@@ -97,25 +118,9 @@ def get_npu_types() -> List[tuple[int, str]]:
     return npu_types
 
 def get_driver_version() -> Optional[DriverVersion]:
-    npu_smi_path = shutil.which("npu-smi")
-    if npu_smi_path is None:
-        raise AscendSmiError("npu-smi command not found in PATH")
-    try:
-        result = subprocess.run(
-            ["npu-smi", "info"],
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=10
-        )
+    output = _get_npu_smi_info_output()
 
-    except subprocess.TimeoutExpired as exc:
-        raise AscendSmiError("npu-smi info timed out") from exc
-    except subprocess.CalledProcessError as exc:
-        stderr = (exc.stderr or "").strip()
-        raise AscendSmiError(f"npu-smi info failed: {stderr or exc}") from exc
-
-    match = _DRIVER_VERSION_REGEX.search(result.stdout)
+    match = _DRIVER_VERSION_REGEX.search(output)
     if match:
         major = int(match.group("major"))
         minor = int(match.group("minor"))
