@@ -9,7 +9,7 @@ Variant Properties emitted follow a three-tuple structure
 namespace :: feature :: value
 ```
 Examples:
-- `ascend :: npu_type :: 910b` - Means: This wheel can be only used on Ascend A2 series.
+- `ascend :: npu_type :: 910b` - Means: This wheel can be only used on Ascend 910B series.
 
 ## Detection Process
 1. **Initialization**: The plugin uses Ascend npu-smi tool to query hardware information
@@ -101,7 +101,7 @@ Use the following command to test installation
 ```
 uv pip install --no-index --find-links ./ helloworld --system -vv
 ```
-If you are running this command on Ascend A2 platform, you will see the key log like the following
+If you are running this command on Ascend 910B platform, you will see the key log like the following
 ```
 TRACE Found namespace ascend with configs VariantProviderOutput { namespace: VariantNamespace("ascend"), features: {VariantFeature("npu_type"): [VariantValue("910b")]} }
 TRACE Received variant metadata for: helloworld-0.1 @ file:///workspace/wheels
